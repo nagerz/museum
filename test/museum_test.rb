@@ -108,4 +108,140 @@ class MuseumTest < Minitest::Test
   end
 
 
+
+  def test_it_can_find_exhibits_in_price_range
+    dmns = Museum.new("Denver Museum of Nature and Science")
+    gems_and_minerals = Exhibit.new("Gems and Minerals", 0)
+    dead_sea_scrolls = Exhibit.new("Dead Sea Scrolls", 10)
+    imax = Exhibit.new("IMAX", 15)
+    dmns.add_exhibit(gems_and_minerals)
+    dmns.add_exhibit(dead_sea_scrolls)
+    dmns.add_exhibit(imax)
+
+    tj = Patron.new("TJ", 7)
+    tj.add_interest("IMAX")
+    tj.add_interest("Dead Sea Scrolls")
+    dmns.admit(tj)
+    bob = Patron.new("Bob", 10)
+    bob.add_interest("Dead Sea Scrolls")
+    bob.add_interest("IMAX")
+    dmns.admit(bob)
+
+    assert_equal [], dmns.affordable_exhibits(tj)
+    assert_equal [dead_sea_scrolls], dmns.affordable_exhibits(bob)
+  end
+
+  def test_it_can_sort_affordable_exhibits_high_to_low
+    dmns = Museum.new("Denver Museum of Nature and Science")
+    gems_and_minerals = Exhibit.new("Gems and Minerals", 0)
+    dead_sea_scrolls = Exhibit.new("Dead Sea Scrolls", 10)
+    imax = Exhibit.new("IMAX", 15)
+    dmns.add_exhibit(gems_and_minerals)
+    dmns.add_exhibit(dead_sea_scrolls)
+    dmns.add_exhibit(imax)
+
+    morgan = Patron.new("Morgan", 15)
+    morgan.add_interest("Gems and Minerals")
+    morgan.add_interest("Dead Sea Scrolls")
+    dmns.admit(morgan)
+
+    assert_equal [dead_sea_scrolls, gems_and_minerals], dmns.sort_affordable_exhibits(morgan)
+  end
+
+  def test_it_has_patrons_attend_affordable_exhibits
+    dmns = Museum.new("Denver Museum of Nature and Science")
+    gems_and_minerals = Exhibit.new("Gems and Minerals", 0)
+    dead_sea_scrolls = Exhibit.new("Dead Sea Scrolls", 10)
+    imax = Exhibit.new("IMAX", 15)
+    dmns.add_exhibit(gems_and_minerals)
+    dmns.add_exhibit(dead_sea_scrolls)
+    dmns.add_exhibit(imax)
+
+    tj = Patron.new("TJ", 7)
+    tj.add_interest("IMAX")
+    tj.add_interest("Dead Sea Scrolls")
+    dmns.admit(tj)
+    bob = Patron.new("Bob", 10)
+    bob.add_interest("Dead Sea Scrolls")
+    bob.add_interest("IMAX")
+    dmns.admit(bob)
+    sally = Patron.new("Sally", 20)
+    sally.add_interest("Dead Sea Scrolls")
+    dmns.admit(sally)
+    morgan = Patron.new("Morgan", 15)
+    morgan.add_interest("Gems and Minerals")
+    morgan.add_interest("Dead Sea Scrolls")
+    dmns.admit(morgan)
+
+    assert_equal [], dmns.attend_exhibits(tj)
+    assert_equal [dead_sea_scrolls], dmns.attend_exhibits(bob)
+    assert_equal [imax], dmns.attend_exhibits(sally)
+    assert_equal [dead_sea_scrolls, gems_and_minerals], dmns.attend_exhibits(morgan)
+  end
+
+  def test_it_can_sort_exhibit_by_patrons
+    skip
+    dmns = Museum.new("Denver Museum of Nature and Science")
+    gems_and_minerals = Exhibit.new("Gems and Minerals", 0)
+    dead_sea_scrolls = Exhibit.new("Dead Sea Scrolls", 10)
+    imax = Exhibit.new("IMAX", 15)
+    dmns.add_exhibit(gems_and_minerals)
+    dmns.add_exhibit(dead_sea_scrolls)
+    dmns.add_exhibit(imax)
+
+    tj = Patron.new("TJ", 7)
+    tj.add_interest("IMAX")
+    tj.add_interest("Dead Sea Scrolls")
+    dmns.admit(tj)
+    bob = Patron.new("Bob", 10)
+    bob.add_interest("Dead Sea Scrolls")
+    bob.add_interest("IMAX")
+    dmns.admit(bob)
+    sally = Patron.new("Sally", 20)
+    sally.add_interest("Dead Sea Scrolls")
+    dmns.admit(sally)
+    morgan = Patron.new("Morgan", 15)
+    morgan.add_interest("Gems and Minerals")
+    morgan.add_interest("Dead Sea Scrolls")
+    dmns.admit(morgan)
+
+    exhibit_patrons = {
+                        gems_and_minerals=>[morgan],
+                        dead_sea_scrolls=>[bob, morgan],
+                        imax=>[sally]
+                      }
+
+    assert_equal exhibit_patrons, dmns.patrons_of_exhibits
+  end
+
+  def test_it_can_calculate_revenue
+    skip
+    dmns = Museum.new("Denver Museum of Nature and Science")
+    gems_and_minerals = Exhibit.new("Gems and Minerals", 0)
+    dead_sea_scrolls = Exhibit.new("Dead Sea Scrolls", 10)
+    imax = Exhibit.new("IMAX", 15)
+    dmns.add_exhibit(gems_and_minerals)
+    dmns.add_exhibit(dead_sea_scrolls)
+    dmns.add_exhibit(imax)
+    tj = Patron.new("TJ", 7)
+    tj.add_interest("IMAX")
+    tj.add_interest("Dead Sea Scrolls")
+    dmns.admit(tj)
+    bob = Patron.new("Bob", 10)
+    bob.add_interest("Dead Sea Scrolls")
+    bob.add_interest("IMAX")
+    dmns.admit(bob)
+    sally = Patron.new("Sally", 20)
+    sally.add_interest("Dead Sea Scrolls")
+    dmns.admit(sally)
+    morgan = Patron.new("Morgan", 15)
+    morgan.add_interest("Gems and Minerals")
+    morgan.add_interest("Dead Sea Scrolls")
+    dmns.admit(morgan)
+
+    assert_equal 35, dmns.revenue
+  end
+
+
+
 end
